@@ -324,6 +324,7 @@ android_library {
         "//frameworks/libs/systemui:contextualeducationlib",
         "SystemUI-statsd",
         "SettingsLib",
+        "libGoogleFeed",
         "launcher-testing-shared",
         "androidx.lifecycle_lifecycle-common-java8",
         "androidx.lifecycle_lifecycle-extensions",
@@ -389,6 +390,13 @@ android_app {
     lint: {
         baseline_filename: "lint-baseline.xml",
     },
+}
+
+java_import {
+    name: "libGoogleFeed",
+    jars: [
+        "libs/libGoogleFeed.jar",
+    ],
 }
 
 // Library with all the dependencies for building quickstep
