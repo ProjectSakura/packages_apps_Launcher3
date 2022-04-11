@@ -322,6 +322,7 @@ android_library {
         "//frameworks/libs/systemui:view_capture",
         "//frameworks/libs/systemui:animationlib",
         "//frameworks/libs/systemui:contextualeducationlib",
+        "org.lineageos.platform",
         "SystemUI-statsd",
         "SettingsLib",
         "libGoogleFeed",
