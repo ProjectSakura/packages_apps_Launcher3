@@ -356,6 +356,7 @@ public class InvariantDeviceProfile implements SafeCloseable,OnSharedPreferenceC
             case KEY_SHOW_DRAWER_LABELS:
             case KEY_ICON_SIZE:
             case KEY_FONT_SIZE:
+            case DeviceProfile.KEY_ROW_HEIGHT:
                 onConfigChanged(mContext);
                 break;
         }
