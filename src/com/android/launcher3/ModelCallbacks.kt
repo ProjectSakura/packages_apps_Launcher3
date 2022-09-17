@@ -39,8 +39,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
     var synchronouslyBoundPages = LIntSet()
     var pagesToBindSynchronously = LIntSet()
 
-    private var isFirstPagePinnedItemEnabled =
-        (BuildConfig.QSB_ON_FIRST_SCREEN && !enableSmartspaceRemovalToggle())
+    private var isFirstPagePinnedItemEnabled = FeatureFlags.USE_QUICKSPACE_VIEW
 
     var stringCache: StringCache? = null
 
