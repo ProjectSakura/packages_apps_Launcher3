@@ -45,6 +45,13 @@
             android:theme="@style/ThemeControlHighlightWorkspaceColor"
             android:visibility="gone" />
 
+        <Space
+            android:id="@+id/lens_space"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:visibility="gone" />
+
         <Button
             android:drawableStart="@drawable/ic_lens"
             style="@style/OverviewActionButton"
@@ -56,11 +63,10 @@
             android:visibility="gone" />
 
         <Space
-            android:id="@+id/lens_space"
+            android:id="@+id/clear_all_space"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_weight="1"
-            android:visibility="gone" />
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/action_clear_all"
