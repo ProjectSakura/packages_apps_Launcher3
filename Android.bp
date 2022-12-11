@@ -323,6 +323,7 @@ android_library {
         "//frameworks/libs/systemui:animationlib",
         "//frameworks/libs/systemui:contextualeducationlib",
         "SystemUI-statsd",
+        "SettingsLib",
         "launcher-testing-shared",
         "androidx.lifecycle_lifecycle-common-java8",
         "androidx.lifecycle_lifecycle-extensions",
