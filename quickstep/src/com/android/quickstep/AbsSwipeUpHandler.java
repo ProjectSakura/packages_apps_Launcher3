@@ -827,6 +827,10 @@ public abstract class AbsSwipeUpHandler<
             return;
         }
         initTransitionEndpoints(mContainer.getDeviceProfile());
+        if (mActivity == null) {
+            return;
+        }
+        initTransitionEndpoints(mActivity.getDeviceProfile());
         mAnimationFactory.createActivityInterface(mTransitionDragLength);
     }
 
