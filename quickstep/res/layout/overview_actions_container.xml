@@ -41,14 +41,21 @@
             android:layout_gravity="center_vertical"
             android:foregroundGravity="center" />
 
+        <Space
+            android:id="@+id/action_split_space"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:visibility="gone" />
+        
         <Button
             android:id="@+id/action_split"
             style="@style/OverviewActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="36dp"
             android:layout_marginStart="@dimen/overview_actions_button_spacing"
-            android:text="@string/action_split"
-            android:theme="@style/ThemeControlHighlightWorkspaceColor"
+            aandroid:layout_gravity="center_vertical"
+            android:foregroundGravity="center"
             android:visibility="gone" />
 
         <Space

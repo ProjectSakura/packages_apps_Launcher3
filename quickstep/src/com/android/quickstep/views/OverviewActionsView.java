@@ -211,8 +211,6 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
         mSaveAppPairButton.setOnClickListener(this);
     }
 
-    }
-
     /**
      * Set listener for callbacks on action button taps.
      *
@@ -445,11 +443,6 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
         updateForIsTablet();
 
         requestLayout();
-
-        int splitIconRes = dp.isLeftRightSplit
-                ? R.drawable.ic_split_horizontal
-                : R.drawable.ic_split_vertical;
-        mSplitButton.setCompoundDrawablesRelativeWithIntrinsicBounds(splitIconRes, 0, 0, 0);
 
         int appPairIconRes = dp.isLeftRightSplit
                 ? R.drawable.ic_save_app_pair_left_right
