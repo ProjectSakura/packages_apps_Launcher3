@@ -26,6 +26,7 @@ import android.os.Build;
 
 import androidx.annotation.NonNull;
 
+import com.android.launcher3.AppFilter;
 import com.android.launcher3.lineage.trust.db.TrustComponent;
 
 import java.util.ArrayList;
@@ -41,6 +42,9 @@ public class LoadTrustComponentsTask extends AsyncTask<Void, Integer, List<Trust
     private PackageManager mPackageManager;
 
     @NonNull
+    private AppFilter mAppFilter;
+
+    @NonNull
     private Callback mCallback;
 
     @NonNull
@@ -48,6 +52,7 @@ public class LoadTrustComponentsTask extends AsyncTask<Void, Integer, List<Trust
 
     LoadTrustComponentsTask(@NonNull AppLockHelper appLockHelper,
             @NonNull PackageManager packageManager,
+            @NonNull AppFilter appFilter,
             @NonNull Callback callback,
             @NonNull Context context) {
         mAppLockHelper = appLockHelper;
@@ -70,6 +75,12 @@ public class LoadTrustComponentsTask extends AsyncTask<Void, Integer, List<Trust
 
         for (int i = 0; i < numPackages; i++) {
             PackageInfo app = apps.get(i);
+
+
+             if (!mAppFilter.shouldShowApp(app.activityInfo.getComponentName())) {
+                 continue;
+             }
+
             try {
                 String pkgName = app.packageName;
                 if (!app.applicationInfo.isSystemApp() || launchablePackages.contains(pkgName) ||
