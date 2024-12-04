@@ -47,6 +47,7 @@ import static com.android.launcher3.popup.SystemShortcut.APP_INFO;
 import static com.android.launcher3.popup.SystemShortcut.BUBBLE_SHORTCUT;
 import static com.android.launcher3.popup.SystemShortcut.DONT_SUGGEST_APP;
 import static com.android.launcher3.popup.SystemShortcut.FREE_FORM;
+import static com.android.launcher3.popup.SystemShortcut.FLOATING;
 import static com.android.launcher3.popup.SystemShortcut.INSTALL;
 import static com.android.launcher3.popup.SystemShortcut.KILL_APP;
 import static com.android.launcher3.popup.SystemShortcut.PAUSE_APPS;
@@ -490,6 +491,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         shortcuts.add(UNINSTALL);
         shortcuts.add(PAUSE_APPS);
         shortcuts.add(FREE_FORM);
+        shortcuts.add(FLOATING);
         shortcuts.add(WIDGETS);
         shortcuts.add(KILL_APP);
         shortcuts.add(INSTALL);
