@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-     Copyright (C) 2016-2024 crDroid Android Project
+<!-- Copyright (C) 2024 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -16,12 +15,10 @@
 -->
 <resources>
 
-    <!-- Base attributes available to CustomSeekBarPreference. -->
-    <declare-styleable name="CustomSeekBarPreference">
-        <attr name="defaultValueText" format="string" />
-        <attr name="interval" format="integer" />
-        <attr name="showSign" format="boolean" />
-        <attr name="units" format="string|reference" />
-        <attr name="continuousUpdates" format="boolean" />
-    </declare-styleable>
-</resources>
+<!-- Note: The actual size will match the taskbar icon sizes in TaskbarView#onLayout(). -->
+<com.android.launcher3.views.IconButtonView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/BaseIcon.Workspace.Taskbar"
+    android:layout_width="@dimen/taskbar_icon_min_touch_size"
+    android:layout_height="@dimen/taskbar_icon_min_touch_size"
+    android:backgroundTint="@android:color/transparent"
+    android:contentDescription="@string/taskbar_overflow_a11y_title" />

@@ -1,7 +1,5 @@
 package com.android.launcher3.popup;
 
-import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
-import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_TASK;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_DISMISS_PREDICTION_UNDO;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_PRIVATE_SPACE_INSTALL_SYSTEM_SHORTCUT_TAP;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_PRIVATE_SPACE_UNINSTALL_SYSTEM_SHORTCUT_TAP;
@@ -10,16 +8,10 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_SYSTEM_SHORTCUT_WIDGETS_TAP;
 import static com.android.launcher3.widget.picker.model.data.WidgetPickerDataUtils.findAllWidgetsForPackageUser;
 
-import android.app.ActivityManagerNative;
-import android.app.IActivityManager;
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.LauncherActivityInfo;
-import android.content.pm.LauncherApps;
 import android.content.pm.ShortcutInfo;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -27,7 +19,6 @@ import android.os.RemoteException;
 import android.os.Process;
 import android.os.UserHandle;
 import android.util.Log;
-import android.view.InflateException;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
@@ -46,7 +37,6 @@ import com.android.launcher3.R;
 import com.android.launcher3.SecondaryDropTarget;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.allapps.PrivateProfileManager;
-import com.android.launcher3.customization.InfoBottomSheet;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.pm.UserCache;
@@ -63,7 +53,6 @@ import com.android.launcher3.widget.picker.model.data.WidgetPickerData;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Represents a system shortcut for a given app. The shortcut should have a label and icon, and an
@@ -204,22 +193,12 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
 
         @Override
         public void onClick(View view) {
-            InfoBottomSheet cbs;
             Rect sourceBounds = Utilities.getViewBounds(view);
             ActivityOptionsWrapper options = mTarget.getActivityLaunchOptions(view, mItemInfo);
             // Dismiss the taskMenu when the app launch animation is complete
             options.onEndCallback.add(this::dismissTaskMenuView);
-            try {
-                cbs = (InfoBottomSheet) mTarget.getLayoutInflater().inflate(
-                        R.layout.app_info_bottom_sheet,
-                        mTarget.getDragLayer(),
-                        false);
-                cbs.configureBottomSheet(sourceBounds, view.getContext());
-                cbs.populateAndShow(mItemInfo);
-            } catch (InflateException e) {
-                PackageManagerHelper.startDetailsActivityForInfo(view.getContext(), mItemInfo,
-                        sourceBounds, options.toBundle());
-            }
+            PackageManagerHelper.startDetailsActivityForInfo(view.getContext(), mItemInfo,
+                    sourceBounds, options.toBundle());
             mTarget.getStatsLogManager().logger().withItemInfo(mItemInfo)
                     .log(LAUNCHER_SYSTEM_SHORTCUT_APP_INFO_TAP);
             dismissTaskMenuView();

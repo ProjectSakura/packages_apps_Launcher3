@@ -129,10 +129,6 @@ public class PackageUpdatedTask implements ModelUpdateTask {
         switch (mOp) {
             case OP_ADD: {
                 for (int i = 0; i < packageCount; i++) {
-                    if (DEBUG) Log.d(TAG, "mAllAppsList.addPackage " + packages[i]);
-                    if (isTargetPackage(packages[i])) {
-                        needsRestart = true;
-                    }
                     iconCache.updateIconsForPkg(packages[i], mUser);
                     if (FeatureFlags.PROMISE_APPS_IN_ALL_APPS.get()) {
                         if (DEBUG) {
@@ -156,10 +152,6 @@ public class PackageUpdatedTask implements ModelUpdateTask {
                     removedComponents.add(a.componentName);
                 })) {
                     for (int i = 0; i < packageCount; i++) {
-                        if (DEBUG) Log.d(TAG, "mAllAppsList.updatePackage " + packages[i]);
-                        if (isTargetPackage(packages[i])) {
-                            needsRestart = true;
-                        }
                         iconCache.updateIconsForPkg(packages[i], mUser);
                         activitiesLists.put(packages[i],
                                 appsList.updatePackage(context, packages[i], mUser));

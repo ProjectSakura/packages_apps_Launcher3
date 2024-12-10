@@ -49,7 +49,6 @@ import com.android.launcher3.apppairs.AppPairIconDrawingParams;
 import com.android.launcher3.apppairs.AppPairIconGraphic;
 import com.android.launcher3.model.data.AppPairInfo;
 import com.android.launcher3.model.data.ItemInfo;
-import com.android.launcher3.graphics.DrawableFactory;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
@@ -446,7 +445,7 @@ public class PreviewItemManager {
     public void setDrawable(PreviewItemDrawingParams p, ItemInfo item) {
         if (item instanceof WorkspaceItemInfo wii) {
             if (isActivePendingIcon(wii)) {
-                p.drawable = mDrawableFactory.newPendingIcon(mContext, wii);
+                p.drawable = newPendingIcon(mContext, wii);
             } else {
                 p.drawable = wii.newIcon(mContext,
                         Themes.isThemedIconEnabled(mContext) ? FLAG_THEMED : 0);

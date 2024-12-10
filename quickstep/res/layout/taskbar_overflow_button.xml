@@ -13,6 +13,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
+<resources>
 
 <!-- Note: The actual size will match the taskbar icon sizes in TaskbarView#onLayout(). -->
 <com.android.launcher3.views.IconButtonView xmlns:android="http://schemas.android.com/apk/res/android"

@@ -536,13 +536,8 @@ public abstract class AbsSwipeUpHandler<
             HashMap<Integer, ThumbnailData> snapshots =
                     mGestureState.consumeRecentsAnimationCanceledSnapshot();
             if (snapshots != null) {
+                mRecentsView.switchToScreenshot(snapshots, () -> {});
                 mRecentsView.onRecentsAnimationComplete();
-                if (mRecentsAnimationController != null) {
-                    mRecentsAnimationController.cleanupScreenshot();
-                } else if (mDeferredCleanupRecentsAnimationController != null) {
-                    mDeferredCleanupRecentsAnimationController.cleanupScreenshot();
-                    mDeferredCleanupRecentsAnimationController = null;
-                }
             }
         });
 
@@ -893,6 +888,7 @@ public abstract class AbsSwipeUpHandler<
                 performHapticFeedback();
             }
         }
+
         updateSysUiFlags(mCurrentShift.value);
         applyScrollAndTransform();
 

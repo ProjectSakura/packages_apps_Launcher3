@@ -120,8 +120,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
 
-import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
-
 /**
  * Various utilities shared amongst the Launcher's classes.
  */

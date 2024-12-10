@@ -39,8 +39,6 @@ import android.app.PendingIntent;
 import android.content.ComponentCallbacks;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.display.DisplayManager;
@@ -485,11 +483,11 @@ public class TaskbarManager implements OnSharedPreferenceChangeListener {
                 + " [dp != null (i.e. mUserUnlocked)]=" + (dp != null)
                 + " FLAG_HIDE_NAVBAR_WINDOW=" + ENABLE_TASKBAR_NAVBAR_UNIFICATION
                 + " dp.isTaskbarPresent=" + (dp == null ? "null" : dp.isTaskbarPresent));
+            SystemUiProxy sysui = SystemUiProxy.INSTANCE.get(mContext);
+            sysui.setTaskbarEnabled(isTaskbarEnabled);
             if (!isTaskbarEnabled || !isLargeScreenTaskbar) {
-                SystemUiProxy sysui = SystemUiProxy.INSTANCE.get(mContext);
-                sysui.setTaskbarEnabled(isTaskbarEnabled);
+                sysui.notifyTaskbarStatus(/* visible */ false, /* stashed */ false);
                 if (!isTaskbarEnabled) {
-                    sysui.notifyTaskbarStatus(/* visible */ false, /* stashed */ false);
                     return;
                 }
             }

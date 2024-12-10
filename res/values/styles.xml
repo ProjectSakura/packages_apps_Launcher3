@@ -83,10 +83,9 @@
     </style>
 
     <style name="LauncherTheme" parent="@style/DynamicColorsBaseLauncherTheme">
-        <item name="android:textColorSecondary">@*android:color/system_neutral2_800</item>
-        <item name="allAppsScrimColor">@*android:color/system_neutral1_50</item>
-        <item name="allappsHeaderProtectionColor">@*android:color/transparent</item>
-        <item name="searchHintHighlight">@*android:color/system_neutral1_800</item>
+        <item name="android:textColorSecondary">#DE000000</item>
+        <item name="allAppsScrimColor">?attr/materialColorSurfaceDim</item>
+        <item name="allappsHeaderProtectionColor">?attr/materialColorSurfaceContainerHighest</item>
         <item name="allAppsNavBarScrimColor">#66FFFFFF</item>
         <item name="popupColorPrimary">@color/popup_color_primary_light</item>
         <item name="popupColorSecondary">@color/popup_color_secondary_light</item>
@@ -159,9 +158,8 @@
         <item name="android:textColorHint">#A0FFFFFF</item>
         <item name="android:colorControlHighlight">#19FFFFFF</item>
         <item name="android:colorPrimary">#FF212121</item>
-        <item name="allAppsScrimColor">@*android:color/system_neutral2_900</item>
-        <item name="allappsHeaderProtectionColor">@*android:color/transparent</item>
-        <item name="searchHintHighlight">@*android:color/system_accent1_100</item>
+        <item name="allAppsScrimColor">?attr/materialColorSurfaceDim</item>
+        <item name="allappsHeaderProtectionColor">?attr/materialColorSurfaceContainerLow</item>
         <item name="allAppsNavBarScrimColor">#80000000</item>
         <item name="popupColorPrimary">@color/popup_color_primary_dark</item>
         <item name="popupColorSecondary">@color/popup_color_secondary_dark</item>
@@ -519,7 +517,7 @@
     <style name="PrivateSpaceHeaderTextStyle">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">?attr/materialColorOnSurface</item>
-        <item name="android:fontFamily">@*android:string/config_bodyFontFamilyMedium</item>
+        <item name="android:fontFamily">google-sans-text-medium</item>
         <item name="android:ellipsize">end</item>
     </style>
 

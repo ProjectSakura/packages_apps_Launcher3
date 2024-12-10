@@ -1432,41 +1432,6 @@ public class Launcher extends StatefulActivity<LauncherState>
                 this, R.attr.isWorkspaceDarkText) ? Color.BLACK : Color.WHITE);
     }
 
-    public void onAppsUpdated() {
-        if (mShouldUpdateSuspensions) {
-            // We do this only once.
-            mShouldUpdateSuspensions = false;
-            updateSuspensions();
-            return;
-        }
-    }
-
-    /**
-     * Reapply suspensions to apps we paused, so as to update suspend dialogs. This is necessary
-     * to ensure that the resources used by the dialog are still correct, particularly in the event
-     * that our app was updated after the suspension took place and may have different resource IDs.
-     */
-    private void updateSuspensions() {
-        final PackageManagerHelper pmHelper = new PackageManagerHelper(this);
-
-        final Map<UserHandle, List<String>> pausedAppsByUser =
-                Stream.of(mAppsView.getAppsStore().getApps())
-                        .filter(i -> pmHelper.isAppSuspendedByUs(i.getTargetPackage(), i.user))
-                        .collect(Collectors.groupingBy((ItemInfo item) -> item.user,
-                                Collectors.mapping(item -> item.getTargetPackage(),
-                                        Collectors.toList())));
-
-        pausedAppsByUser.forEach((targetUser, packages) -> {
-            Log.d(TAG, "Re-suspending apps to update suspend dialogs for user " + targetUser
-                    + ": " + packages);
-            try {
-                pmHelper.suspendPackages(packages, targetUser);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to re-suspend packages for user " + targetUser + "!", e);
-            }
-        });
-    }
-
     /**
      * Add a shortcut to the workspace or to a Folder.
      *
