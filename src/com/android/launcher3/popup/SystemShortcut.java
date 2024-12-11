@@ -1,45 +1,38 @@
 package com.android.launcher3.popup;
 
+import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
+import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_TASK;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_DISMISS_PREDICTION_UNDO;
-import static android.app.WindowConfiguration.WINDOWING_MODE_FREEFORM;
-import static android.content.pm.SuspendDialogInfo.BUTTON_ACTION_UNSUSPEND;
-
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_PRIVATE_SPACE_INSTALL_SYSTEM_SHORTCUT_TAP;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_PRIVATE_SPACE_UNINSTALL_SYSTEM_SHORTCUT_TAP;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_SYSTEM_SHORTCUT_APP_INFO_TAP;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_SYSTEM_SHORTCUT_DONT_SUGGEST_APP_TAP;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_SYSTEM_SHORTCUT_WIDGETS_TAP;
 import static com.android.launcher3.widget.picker.model.data.WidgetPickerDataUtils.findAllWidgetsForPackageUser;
-import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
-import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_TASK;
 
 import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
 import android.app.AlertDialog;
-import android.app.AppGlobals;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ShortcutInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
-import android.content.pm.SuspendDialogInfo;
+import android.content.pm.ShortcutInfo;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.Process;
 import android.os.RemoteException;
+import android.os.Process;
 import android.os.UserHandle;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.View;
-import android.view.WindowInsets;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.window.SplashScreen;
 import android.os.UserHandle;
 
 import androidx.annotation.NonNull;
@@ -70,6 +63,7 @@ import com.android.launcher3.widget.picker.model.data.WidgetPickerData;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents a system shortcut for a given app. The shortcut should have a label and icon, and an
@@ -83,7 +77,6 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
         implements View.OnClickListener {
     private static final String TAG = "SystemShortcut";
 
-    private static final String TAG = SystemShortcut.class.getSimpleName();
     private final int mIconResId;
     protected final int mLabelResId;
     protected int mAccessibilityActionId;
@@ -209,7 +202,6 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
             }
         }
 
-
         @Override
         public void onClick(View view) {
             InfoBottomSheet cbs;
@@ -217,8 +209,6 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
             ActivityOptionsWrapper options = mTarget.getActivityLaunchOptions(view, mItemInfo);
             // Dismiss the taskMenu when the app launch animation is complete
             options.onEndCallback.add(this::dismissTaskMenuView);
-            PackageManagerHelper.startDetailsActivityForInfo(view.getContext(), mItemInfo,
-                    sourceBounds, options.toBundle());
             try {
                 cbs = (InfoBottomSheet) mTarget.getLayoutInflater().inflate(
                         R.layout.app_info_bottom_sheet,
@@ -227,11 +217,12 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
                 cbs.configureBottomSheet(sourceBounds, view.getContext());
                 cbs.populateAndShow(mItemInfo);
             } catch (InflateException e) {
-                new PackageManagerHelper(view.getContext()).startDetailsActivityForInfo(
-                        mItemInfo, sourceBounds, ActivityOptions.makeBasic().toBundle());
+                PackageManagerHelper.startDetailsActivityForInfo(view.getContext(), mItemInfo,
+                        sourceBounds, options.toBundle());
             }
             mTarget.getStatsLogManager().logger().withItemInfo(mItemInfo)
                     .log(LAUNCHER_SYSTEM_SHORTCUT_APP_INFO_TAP);
+            dismissTaskMenuView();
         }
 
         public static class SplitAccessibilityInfo {
@@ -356,6 +347,49 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
         }
     }
 
+    public static final Factory<ActivityContext> PAUSE_APPS =
+            (activity, itemInfo, originalView) -> {
+                if (originalView == null) {
+                    return null;
+                }
+                if (new PackageManagerHelper(originalView.getContext()).isAppSuspended(
+                        itemInfo.getTargetComponent().getPackageName(), itemInfo.user)) {
+                    return null;
+                }
+                return new PauseApps(activity, itemInfo, originalView);
+    };
+
+    public static class PauseApps<T extends ActivityContext> extends SystemShortcut<T> {
+
+        public PauseApps(T target, ItemInfo itemInfo, View originalView) {
+            super(R.drawable.ic_hourglass, R.string.paused_apps_drop_target_label, target,
+                    itemInfo, originalView);
+        }
+
+        @Override
+        public void onClick(View view) {
+            final Context context = view.getContext();
+            final PackageManagerHelper pmHelper = new PackageManagerHelper(context);
+            final String packageToSuspend = mItemInfo.getTargetComponent().getPackageName();
+            final UserHandle packageUser = mItemInfo.user;
+            final CharSequence appLabel = context.getPackageManager().getApplicationLabel(
+                    pmHelper.getApplicationInfo(packageToSuspend, packageUser, 0));
+            new AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.pause_apps_dialog_title, appLabel))
+                    .setMessage(context.getString(R.string.pause_apps_dialog_message, appLabel))
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(R.string.pause, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final PackageManagerHelper pmHelper = new PackageManagerHelper(context);
+                            pmHelper.suspendPackages(List.of(packageToSuspend), packageUser);
+                        }
+                    })
+                    .show();
+            AbstractFloatingView.closeAllOpenViews(mTarget);
+        }
+    }
+
     public static final Factory<ActivityContext> DONT_SUGGEST_APP =
             (activity, itemInfo, originalView) -> {
                 if (!itemInfo.isPredictedItem()) {
@@ -432,63 +466,6 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
                     .log(LAUNCHER_PRIVATE_SPACE_UNINSTALL_SYSTEM_SHORTCUT_TAP);
         }
     }
-
-    public static final Factory<ActivityContext> PAUSE_APPS =
-            (activity, itemInfo, originalView) -> {
-                if (originalView == null) {
-                    return null;
-                }
-                if (new PackageManagerHelper(originalView.getContext()).isAppSuspended(
-                        itemInfo.getTargetComponent().getPackageName(), itemInfo.user)) {
-                    return null;
-                }
-                return new PauseApps(activity, itemInfo, originalView);
-    };
-
-    public static class PauseApps<T extends ActivityContext> extends SystemShortcut<T> {
-
-        public PauseApps(T target, ItemInfo itemInfo, View originalView) {
-            super(R.drawable.ic_hourglass, R.string.paused_apps_drop_target_label, target,
-                    itemInfo, originalView);
-        }
-
-        @Override
-        public void onClick(View view) {
-            Context context = view.getContext();
-            CharSequence appLabel = context.getPackageManager().getApplicationLabel(
-                    new PackageManagerHelper(context).getApplicationInfo(
-                            mItemInfo.getTargetComponent().getPackageName(), mItemInfo.user, 0));
-            new AlertDialog.Builder(context)
-                    .setTitle(context.getString(R.string.pause_apps_dialog_title,
-                            appLabel))
-                    .setMessage(context.getString(R.string.pause_apps_dialog_message,
-                            appLabel))
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(R.string.pause, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            try {
-                                AppGlobals.getPackageManager().setPackagesSuspendedAsUser(
-                                        new String[]{
-                                                mItemInfo.getTargetComponent().getPackageName()},
-                                        true, null, null,
-                                        new SuspendDialogInfo.Builder()
-                                                .setTitle(R.string.paused_apps_dialog_title)
-                                                .setMessage(R.string.paused_apps_dialog_message)
-                                                .setNeutralButtonAction(BUTTON_ACTION_UNSUSPEND)
-                                                .build(), 0, context.getOpPackageName(),
-                                        context.getUserId(),
-                                        mItemInfo.user.getIdentifier());
-                            } catch (RemoteException e) {
-                                Log.e(TAG, "Failed to pause app", e);
-                            }
-                        }
-                    })
-                    .show();
-            AbstractFloatingView.closeAllOpenViews(mTarget);
-        }
-    }
-
 
     public static final Factory<ActivityContext> UNINSTALL = (activity, itemInfo, originalView) ->
             itemInfo.getTargetComponent() == null ||
@@ -612,43 +589,6 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
     protected void dismissTaskMenuView() {
         mAbstractFloatingViewHelper.closeOpenViews(mTarget, true,
                 AbstractFloatingView.TYPE_ALL & ~AbstractFloatingView.TYPE_REBIND_SAFE);
-    }
-
-    public static final Factory<ActivityContext> FREE_FORM = (activity, itemInfo, originalView) -> 
-        new FreeForm(activity, itemInfo, originalView);
-
-    public static class FreeForm<T extends ActivityContext> extends SystemShortcut<T> { 
-        private final String mPackageName;
-        
-        public FreeForm(T target, ItemInfo itemInfo, View originalView) {
-            super(R.drawable.ic_caption_desktop_button_foreground, R.string.recent_task_option_freeform, target, itemInfo, originalView);
-            mPackageName = itemInfo.getTargetComponent().getPackageName();
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (mPackageName != null) {
-                Intent intent = ((Context) mTarget).getPackageManager().getLaunchIntentForPackage(mPackageName);
-                if (intent != null) {
-                    ActivityOptions options = makeLaunchOptions(((Activity) mTarget));
-                    ((Context) mTarget).startActivity(intent, options.toBundle());
-                    AbstractFloatingView.closeAllOpenViews(((ActivityContext) mTarget));
-                }
-            }
-        }
-
-        private ActivityOptions makeLaunchOptions(Activity activity) {
-            ActivityOptions activityOptions = ActivityOptions.makeBasic();
-            activityOptions.setLaunchWindowingMode(WINDOWING_MODE_FREEFORM);
-            final View decorView = activity.getWindow().getDecorView();
-            final WindowInsets insets = decorView.getRootWindowInsets();
-            final Rect r = new Rect(0, 0, decorView.getWidth() / 2, decorView.getHeight() / 2);
-            r.offsetTo(insets.getSystemWindowInsetLeft() + 50, insets.getSystemWindowInsetTop() + 50);
-            activityOptions.setLaunchBounds(r);
-            activityOptions.setSplashScreenStyle(SplashScreen.SPLASH_SCREEN_STYLE_ICON);
-            activityOptions.setTaskOverlay(true /* taskOverlay */, true /* canResume */);
-            return activityOptions;
-        }
     }
 
     public static final Factory<ActivityContext> BUBBLE_SHORTCUT =
