@@ -1,10 +1,7 @@
 package com.android.launcher3.popup;
 
-<<<<<<< HEAD
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_DISMISS_PREDICTION_UNDO;
-=======
 import static android.app.WindowConfiguration.WINDOWING_MODE_FREEFORM;
->>>>>>> f189a8f2bc (Launcher3: Launch apps in freeform mode system shortcut)
 import static android.content.pm.SuspendDialogInfo.BUTTON_ACTION_UNSUSPEND;
 
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_PRIVATE_SPACE_INSTALL_SYSTEM_SHORTCUT_TAP;
@@ -16,12 +13,9 @@ import static com.android.launcher3.widget.picker.model.data.WidgetPickerDataUti
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_TASK;
 
-<<<<<<< HEAD
-=======
 import android.app.Activity;
 import android.app.ActivityManagerNative;
 import android.app.ActivityOptions;
->>>>>>> f189a8f2bc (Launcher3: Launch apps in freeform mode system shortcut)
 import android.app.AlertDialog;
 import android.app.AppGlobals;
 import android.content.ComponentName;
