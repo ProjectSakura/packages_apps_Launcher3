@@ -3537,12 +3537,13 @@ public abstract class RecentsView<
                     splitAnimInitProps.getFadeWithThumbnail(), splitAnimInitProps.isStagedTask());
             mSplitSelectStateController.setFirstFloatingTaskView(firstFloatingTaskView);
 
-        // Allow user to click staged app to launch into fullscreen
-        firstFloatingTaskView.setOnClickListener(view ->
-                mSplitSelectStateController.getSplitAnimationController().
-                        playAnimPlaceholderToFullscreen(mContainer, view,
-                                Optional.of(() -> resetFromSplitSelectionState())));
-        firstFloatingTaskView.setContentDescription(splitAnimInitProps.getContentDescription());
+            // Allow user to click staged app to launch into fullscreen
+            firstFloatingTaskView.setOnClickListener(view ->
+                    mSplitSelectStateController.getSplitAnimationController().
+                            playAnimPlaceholderToFullscreen(mContainer, view,
+                                    Optional.of(() -> resetFromSplitSelectionState())));
+            firstFloatingTaskView.setContentDescription(splitAnimInitProps.getContentDescription());
+        }
 
         // SplitInstructionsView: animate in
         safeRemoveDragLayerView(mSplitSelectStateController.getSplitInstructionsView());
@@ -6458,7 +6459,7 @@ public abstract class RecentsView<
     }
 
     private void doScrollScale() {
-        if (showAsGrid() || mActivity.getDeviceProfile().isTablet)
+        if (showAsGrid())
             return;
 
         //nick@lmo-20231004 if rotating launcher is enabled, rotation works differently
